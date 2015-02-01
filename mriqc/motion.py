@@ -1,7 +1,7 @@
 import numpy as np
 import pylab as plt
 import seaborn as sns
-from mriqc.misc import plot_vline
+from misc import plot_vline
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_pdf import FigureCanvasPdf as FigureCanvas
 from matplotlib.gridspec import GridSpec
@@ -57,9 +57,11 @@ def plot_frame_displacement(realignment_parameters_file, mean_FD_distribution=No
     if mean_FD_distribution:
         ax = fig.add_subplot(grid[1,:])
         sns.distplot(mean_FD_distribution, ax=ax)
-        ax.set_xlabel("Mean Frame Dispalcement (over all subjects) [mm]")
+        ax.set_xlabel("Mean Frame Displacement (over all subjects) [mm]")
         MeanFD = FD_power.mean()
         label = "MeanFD = %g"%MeanFD
         plot_vline(MeanFD, label, ax=ax)
+        
+    fig.suptitle('motion', fontsize='14')
         
     return fig

@@ -4,7 +4,7 @@ import seaborn as sns
 from pylab import cm
 from nipype.interfaces.freesurfer.preprocess import ApplyVolTransform
 from nipy.labs import viz
-from mriqc.misc import plot_vline
+from misc import plot_vline
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_pdf import FigureCanvasPdf as FigureCanvas
 from matplotlib.gridspec import GridSpec
@@ -18,7 +18,7 @@ def get_similarity_distribution(mincost_files):
     return similarities
     
     
-def plot_epi_T1_corregistration(mean_epi_file, reg_file, fssubjects_dir, subject_id, similarity_distribution=None, figsize=(11.7,8.3),):
+def plot_epi_T1_corregistration(mean_epi_file, wm_file, reg_file, fssubjects_dir, subject_id, similarity_distribution=None, figsize=(11.7,8.3),):
        
     fig = plt.figure(figsize=figsize)
     
@@ -43,18 +43,24 @@ def plot_epi_T1_corregistration(mean_epi_file, reg_file, fssubjects_dir, subject
     func = nb.load(res.outputs.transformed_file).get_data()
     func_affine = nb.load(res.outputs.transformed_file).get_affine()
     
-    ribbon_file = "%s/%s/mri/ribbon.mgz"%(fssubjects_dir, subject_id)
-    ribbon_nii = nb.load(ribbon_file)
-    ribbon_data = ribbon_nii.get_data()
-    ribbon_data[ribbon_data > 1] = 1
-    ribbon_affine = ribbon_nii.get_affine()
+#     ribbon_file = "%s/%s/mri/ribbon.mgz"%(fssubjects_dir, subject_id)
+#     ribbon_nii = nb.load(ribbon_file)
+#     ribbon_data = ribbon_nii.get_data()
+#     ribbon_data[ribbon_data > 1] = 1
+#     ribbon_affine = ribbon_nii.get_affine()
+    
+    wm_nii = nb.load(wm_file)
+    wm_data = wm_nii.get_data()
+    wm_data[wm_data > 1] = 1
+    wm_affine = wm_nii.get_affine()
     
     slicer = viz.plot_anat(np.asarray(func), np.asarray(func_affine), black_bg=True,
                            cmap = cm.Greys_r,  # @UndefinedVariable
-                           cut_coords = (-6,3,32),
                            figure = fig,
                            axes = ax,
                            draw_cross = False)
-    slicer.contour_map(np.asarray(ribbon_data), np.asarray(ribbon_affine), levels=[.51], colors=['r',])
+    slicer.contour_map(np.asarray(wm_data), np.asarray(wm_affine), linewidths=[0.1], colors=['r',])
+    
+    fig.suptitle('coregistration', fontsize='14')
     
     return fig
