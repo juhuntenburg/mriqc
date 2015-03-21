@@ -19,7 +19,7 @@ if __name__ == '__main__':
     
     for scan in scans:
         print scan
-        with open('/scr/ilz2/LEMON_LSD/list_reports_lsd.txt', 'r') as f:
+        with open('/scr/ilz2/LEMON_LSD/list_reports_lsd_%s.txt'%(scan), 'r') as f:
             subjects = [line.strip() for line in f]
         
         subjects.sort()
@@ -90,5 +90,5 @@ if __name__ == '__main__':
             report.plugin_args={'override_specs': 'request_memory = 4000'}
             wf.add_nodes([report])
               
-    wf.run()
+    wf.run(plugin='MultiProc')
          
