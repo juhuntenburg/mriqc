@@ -19,7 +19,7 @@ if __name__ == '__main__':
     
     for scan in scans:
         print scan
-        with open('/scr/ilz2/LEMON_LSD/list_reports_lsd_%s.txt'%(scan), 'r') as f:
+        with open('/scr/ilz2/LEMON_LSD/reports_lsd_%s.txt'%(scan), 'r') as f:
             subjects = [line.strip() for line in f]
         
         subjects.sort()

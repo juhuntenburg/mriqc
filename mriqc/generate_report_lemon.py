@@ -9,14 +9,15 @@ from nipype.interfaces.utility import Function
 
 
 if __name__ == '__main__':
-    data_dir = "/scr/ilz2/LEMON_LSD/"
-    out_dir= "/scr/ilz2/LEMON_LSD/reports/lemon/"
+    data_dir = "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/probands/"
+    out_dir= "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/results/reports/lemon/"
+    freesurfer_dir="/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/freesurfer/"
     
     scans=['rest']
     wf = Workflow("reports")
-    wf.base_dir = data_dir+'working_dir_reports_lemon/'
+    wf.base_dir = raw_input('working dir: ')
 
-    with open('/scr/ilz2/LEMON_LSD/list_reports_lemon.txt', 'r') as f:
+    with open('/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/documents/all_lemon.txt', 'r') as f:
         subjects = [line.strip() for line in f]
     
     subjects.sort()
@@ -50,7 +51,7 @@ if __name__ == '__main__':
         mean_epi_uncorrected_file = data_dir + "%s/preprocessed/lemon_resting/coregister/rest_mean2fmap.nii.gz"%(subject)
         mask_file = data_dir + "%s/preprocessed/lemon_resting/denoise/mask/T1_brain_mask2epi.nii.gz"%(subject)
         reg_file = data_dir + "%s/preprocessed/lemon_resting/coregister/transforms2anat/rest2anat.dat"%(subject)
-        fssubjects_dir = data_dir + "freesurfer/"
+        fssubjects_dir = freesurfer_dir
 
         mincost_file = data_dir + "%s/preprocessed/lemon_resting/coregister/rest2anat.dat.mincost"%(subject)
         
@@ -87,5 +88,5 @@ if __name__ == '__main__':
         report.plugin_args={'override_specs': 'request_memory = 4000'}
         wf.add_nodes([report])
               
-    wf.run(plugin='MultiProc')
+    wf.run(plugin='MultiProc', plugin_args={'n_procs' : 30})
          
