@@ -62,6 +62,7 @@ if __name__ == '__main__':
             report = Node(Function(input_names=['subject_id', 
                                                  'tsnr_file', 
                                                  'realignment_parameters_file', 
+                                                 'parameter_source',
                                                  'mean_epi_file',
                                                  'mean_epi_uncorrected_file',
                                                  'wm_file', 
