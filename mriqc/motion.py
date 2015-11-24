@@ -6,13 +6,18 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_pdf import FigureCanvasPdf as FigureCanvas
 from matplotlib.gridspec import GridSpec
 
-def calc_frame_dispalcement(realignment_parameters_file):
+def calc_frame_dispalcement(realignment_parameters_file, parameter_source):
     lines = open(realignment_parameters_file, 'r').readlines()
     rows = [[float(x) for x in line.split()] for line in lines]
     cols = np.array([list(col) for col in zip(*rows)])
 
-    translations = np.transpose(np.abs(np.diff(cols[0:3, :])))
-    rotations = np.transpose(np.abs(np.diff(cols[3:6, :])))
+    if parameter_source == 'AFNI':
+        translations = np.transpose(np.abs(np.diff(cols[0:3, :])))
+        rotations = np.transpose(np.abs(np.diff(cols[3:6, :])))
+    
+    elif parameter_source == 'FSL':
+        translations = np.transpose(np.abs(np.diff(cols[3:6, :])))
+        rotations = np.transpose(np.abs(np.diff(cols[0:3, :])))
 
     FD_power = np.sum(translations, axis = 1) + (50*3.141/180)*np.sum(rotations, axis =1)
 
@@ -21,19 +26,19 @@ def calc_frame_dispalcement(realignment_parameters_file):
     
     return FD_power
 
-def get_mean_frame_displacement_disttribution(realignment_parameters_files):
+def get_mean_frame_displacement_disttribution(realignment_parameters_files, parameter_source):
     mean_FDs = []
     max_FDs = []
     for realignment_parameters_file in realignment_parameters_files:
-        FD_power = calc_frame_dispalcement(realignment_parameters_file)
+        FD_power = calc_frame_dispalcement(realignment_parameters_file, parameter_source)
         mean_FDs.append(FD_power.mean())
         max_FDs.append(FD_power.max())
         
     return mean_FDs, max_FDs
 
-def plot_frame_displacement(realignment_parameters_file, mean_FD_distribution=None, figsize=(11.7,8.3)):
+def plot_frame_displacement(realignment_parameters_file, parameter_source, mean_FD_distribution=None, figsize=(11.7,8.3)):
 
-    FD_power = calc_frame_dispalcement(realignment_parameters_file)
+    FD_power = calc_frame_dispalcement(realignment_parameters_file, parameter_source)
 
     fig = Figure(figsize=figsize)
     FigureCanvas(fig)

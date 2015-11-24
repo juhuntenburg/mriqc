@@ -1,4 +1,4 @@
-def create_report(subject_id, tsnr_file, realignment_parameters_file, mean_epi_file, mean_epi_uncorrected_file, wm_file, 
+def create_report(subject_id, tsnr_file, realignment_parameters_file, parameter_source, mean_epi_file, mean_epi_uncorrected_file, wm_file, 
                   mask_file, reg_file, fssubjects_dir, similarity_distribution, mean_FD_distribution, tsnr_distributions, output_file):
     import gc
     import pylab as plt
@@ -32,7 +32,7 @@ def create_report(subject_id, tsnr_file, realignment_parameters_file, mean_epi_f
     fig.clf()
     plt.close()
     
-    fig = plot_frame_displacement(realignment_parameters_file, mean_FD_distribution, figsize=(8.3, 8.3))
+    fig = plot_frame_displacement(realignment_parameters_file, parameter_source, mean_FD_distribution, figsize=(8.3, 8.3))
     report.savefig(fig, dpi=300)
     fig.clf()
     plt.close()

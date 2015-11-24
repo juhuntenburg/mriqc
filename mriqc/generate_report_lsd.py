@@ -30,7 +30,7 @@ if __name__ == '__main__':
         
           
         realignment_parameters_files = [data_dir + "%s/preprocessed/lsd_resting/%s/realign/rest_realigned.par"%(subject, scan) for subject in subjects]
-        mean_FD_distribution, max_FD_distribution = get_mean_frame_displacement_disttribution(realignment_parameters_files)
+        mean_FD_distribution, max_FD_distribution = get_mean_frame_displacement_disttribution(realignment_parameters_files, 'FSL')
           
         tsnr_files = [data_dir + "%s/preprocessed/lsd_resting/%s/realign/rest_realigned_tsnr.nii.gz"%(subject, scan) for subject in subjects]
         mask_files = [data_dir + "%s/preprocessed/lsd_resting/%s/denoise/mask/T1_brain_mask2epi.nii.gz"%(subject, scan) for subject in subjects]
@@ -77,6 +77,7 @@ if __name__ == '__main__':
             report.inputs.subject_id = subject
             report.inputs.tsnr_file = tsnr_file
             report.inputs.realignment_parameters_file = realignment_parameters_file
+            report.inputs.parameter_source = 'FSL'
             report.inputs.mean_epi_file = mean_epi_file
             report.inputs.mean_epi_uncorrected_file = mean_epi_uncorrected_file
             report.inputs.wm_file = wm_file
