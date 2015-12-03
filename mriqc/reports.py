@@ -69,8 +69,8 @@ def read_dists(csv_file):
     return sim, mfd, tsnr
 
 
-def check(subject_id, checklist):
+def check(subject_id, scan_id, checklist):
     
-    with open(checklist, 'a') as f:
+    with open(checklist%(scan_id), 'a') as f:
         f.write(subject_id+'\n')
     return checklist
