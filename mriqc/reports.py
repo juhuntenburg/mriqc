@@ -53,4 +53,24 @@ def create_report(subject_id, tsnr_file, realignment_parameters_file, parameter_
     gc.collect()
     plt.close()
     
-    return output_file
+    return output_file, subject_id
+
+
+
+def read_dists(csv_file):
+    
+    import pandas as pd
+    import numpy as np
+    df = pd.read_csv(csv_file, dtype=object)
+    sim = dict(zip(df['subject_id'], list(np.asarray(df['coregistration quality'], dtype='float64'))))
+    mfd = list(np.asarray(df['Mean FD'], dtype='float64'))
+    tsnr = list(np.asarray(df['Median tSNR'], dtype='float64'))
+    
+    return sim, mfd, tsnr
+
+
+def check(subject_id, checklist):
+    
+    with open(checklist, 'a') as f:
+        f.write(subject_id+'\n')
+    return checklist
