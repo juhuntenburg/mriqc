@@ -21,13 +21,12 @@ if __name__ == '__main__':
     
     for scan in scans:
         print scan
-        with open('/scr/ilz2/LEMON_LSD/all_lsd_julia.txt', 'r') as f:
+        with open('/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/documents/all_lsd_%s_new.txt'%scan, 'r') as f:
             subjects = [line.strip() for line in f]
         subjects.sort()
-        subjects.remove('26858')
-        subjects.remove('26435')
-        subjects.remove('27062')
-        subjects.remove('28014')
+        #subjects.remove('26858')
+        #subjects.remove('26435')
+        #subjects.remove('27062')
          
         #generating distributions
         print 'generating similarity'

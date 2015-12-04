@@ -83,7 +83,7 @@ def _get_values_inside_a_mask(main_file, mask_file):
 def get_median_distribution(main_files, mask_files):
     medians = []
     for main_file, mask_file in zip(main_files, mask_files):
-	print main_file
+	#print main_file
         med = np.median(_get_values_inside_a_mask(main_file, mask_file))
         medians.append(med)
     return medians
