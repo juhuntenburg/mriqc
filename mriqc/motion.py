@@ -11,20 +11,33 @@ def calc_frame_dispalcement(realignment_parameters_file, parameter_source):
     rows = [[float(x) for x in line.split()] for line in lines]
     cols = np.array([list(col) for col in zip(*rows)])
 
+    # Assuming a 50 mm radius to convert rotation to displacement on a sphere
+    # from https://github.com/poldrack/fmriqa/blob/master/compute_fd.py :
+    # Circumference of the sphere is pi*2*radius. Multiply that circumference 
+    # by (degree rotation/360) or (radians rotation/2*pi) to get the length of 
+    # the arc produced by a rotation.   
+    
+    headradius=50
+    
     if parameter_source == 'AFNI':
         translations = np.transpose(np.abs(np.diff(cols[0:3, :])))
         rotations = np.transpose(np.abs(np.diff(cols[3:6, :])))
+        # afni returns rotation in degrees
+        arc = 2 * np.pi * headradius * (rotations/360.)
     
     elif parameter_source == 'FSL':
         translations = np.transpose(np.abs(np.diff(cols[3:6, :])))
         rotations = np.transpose(np.abs(np.diff(cols[0:3, :])))
+        # mcflirt returns rotation in radians
+        # arc = 2 * np.pi * headradius * (rotations/2*np.pi) --> drop the 2pi
+        arc = headradius * rotations
 
-    FD_power = np.sum(translations, axis = 1) + (50*3.141/180)*np.sum(rotations, axis =1)
-
+    FD_power = np.sum(translations, axis = 1) + np.sum(arc, axis =1)
     #FD is zero for the first time point
     FD_power = np.insert(FD_power, 0, 0)
     
     return FD_power
+
 
 def get_mean_frame_displacement_disttribution(realignment_parameters_files, parameter_source):
     mean_FDs = []
