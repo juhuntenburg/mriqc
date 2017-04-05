@@ -24,7 +24,7 @@ def create_report(subject_id, tsnr_file, realignment_parameters_file, parameter_
     fig.clf()
     
     fig = plot_distrbution_of_values(tsnr_file, mask_file, 
-        "Subject %s tSNR inside the mask" % subject_id, 
+        "tSNR inside the mask", 
         tsnr_distributions, 
         "Median tSNR (over all subjects)", 
         figsize=(8.3, 8.3))
@@ -62,7 +62,7 @@ def read_dists(csv_file):
     import pandas as pd
     import numpy as np
     df = pd.read_csv(csv_file, dtype=object)
-    sim = dict(zip(df['subject_id'], list(np.asarray(df['coregistration quality'], dtype='float64'))))
+    sim = dict(zip(df['subject_id'], list(np.asarray(df['coregistration dissimilarity'], dtype='float64'))))
     mfd = list(np.asarray(df['Mean FD'], dtype='float64'))
     tsnr = list(np.asarray(df['Median tSNR'], dtype='float64'))
     

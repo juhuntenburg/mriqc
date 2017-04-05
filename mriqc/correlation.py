@@ -25,12 +25,12 @@ def plot_epi_T1_corregistration(mean_epi_file, wm_file, reg_file, fssubjects_dir
     if similarity_distribution:
         ax = plt.subplot(2,1,1)
         sns.distplot(similarity_distribution.values(), ax=ax)
-        ax.set_xlabel("EPI-T1 similarity after coregistration (over all subjects)")
+        ax.set_xlabel("EPI-T1 dissimilarity after coreg (over all subjects)")
         cur_similarity = similarity_distribution[subject_id]
-        label = "similarity = %g"%cur_similarity
+        label = "dissimilarity = %g"%cur_similarity
         plot_vline(cur_similarity, label, ax=ax)
         
-        ax = plt.subplot(2,1,0)
+        ax = plt.subplot(2,1,2)
     else:
         ax = plt.subplot(1,1,0)
     

@@ -11,26 +11,35 @@ from nipype.interfaces.io import SelectFiles
 
 if __name__ == '__main__':
     data_dir = "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/"
-    out_dir= "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/results/reports/lsd/"
+    out_dir= "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/results/reports/lsd_new/"
     fs_dir= "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/freesurfer/"
     
-    subjects_file = '/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/documents/all_lsd_%s_new.txt'
+    subjects_file = ''
     stats_file = out_dir+"%s_summary.csv"
     check_file = out_dir+'checklist_%s.txt'
     
-    scans = ['rest1a'] #, 'rest1b', 'rest2a', 'rest2b']
+    scans = ['rest1a']#, 'rest1b', 'rest2a', 'rest2b']
     
         
     wf = Workflow("reports_part2")
-    wf.base_dir = "/scr/ilz3/LEMON_LSD/wd_reports_julia/"
+    wf.base_dir = "/nobackup/ilz2/LEMON_LSD/rescue_julia/working_dir/"
     wf.config['execution']['crashdump_dir'] = wf.base_dir + "crash_files/"
 
-    with open(subjects_file%scans[0], 'r') as f: # can be made dependent on scan
-        subjects = [line.strip() for line in f]
+    subjects = list(pd.read_csv('/home/raid3/huntenburg/workspace/lsd_data_paper/lsd_preproc.csv', dtype='str')['ID'])
     subjects.sort()
-    #subjects.remove('26858')
-    #subjects.remove('26435')
-    #subjects.remove('27062')
+    if scans[0] == 'rest1a':
+        pass
+    elif scans[0] == 'rest1b':
+        subjects.remove('')
+    elif scans[0] == 'rest2a':
+        subjects.remove('')
+        subjects.remove('')
+    elif scans[0] == 'rest2b':
+        subjects.remove('')
+        subjects.remove('')
+        subjects.remove('')
+        subjects.remove('')
+        subjects.remove('')
     
     with open(check_file%scans[0], 'r') as cf:
         done = [line.strip() for line in cf]
@@ -67,8 +76,8 @@ if __name__ == '__main__':
     
     
     # select files
-    templates={'stats_file' : "results/reports/lsd/{scan_id}_summary.csv",
-                'tsnr_file' : "probands/{subject_id}/preprocessed/lsd_resting/{scan_id}/realign/rest_realigned_tsnr.nii.gz",
+    templates={'stats_file' : "results/reports/lsd_new/{scan_id}_summary.csv",
+                'tsnr_file' : "probands/{subject_id}/preprocessed/lsd_resting/{scan_id}/realign/*tsnr.nii.gz",
                 'timeseries_file' : "probands/{subject_id}/preprocessed/lsd_resting/{scan_id}/rest_preprocessed.nii.gz",
                 'realignment_parameters_file' : "probands/{subject_id}/preprocessed/lsd_resting/{scan_id}/realign/rest_realigned.par",
                 'wm_file' : "probands/{subject_id}/preprocessed/anat/T1_brain_wmedge.nii.gz",

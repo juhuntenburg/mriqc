@@ -10,24 +10,38 @@ from nipype.interfaces.utility import Function
 
 if __name__ == '__main__':
     data_dir = "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/probands/"
-    out_dir= "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/results/reports/lsd/"
+    out_dir= "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/results/reports/lsd_new/"
     fs_dir= "/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/freesurfer/"
     
+    
     scans = ['rest1a', 'rest1b', 'rest2a', 'rest2b']
-    wf = Workflow("reports")
-    wf.base_dir = "/scr/ilz3/LEMON_LSD/wd_reports_julia/"
-    wf.config['execution']['crashdump_dir'] = wf.base_dir + "crash_files/"
+
+#   wf = Workflow("reports")
+#   wf.base_dir = "/nobackup/ilz2/LEMON_LSD/rescue_julia/working_dir/"
+#   wf.config['execution']['crashdump_dir'] = wf.base_dir + "crash_files/"
     
     
     for scan in scans:
         print scan
-        with open('/afs/cbs.mpg.de/projects/mar004_lsd-lemon-preproc/documents/all_lsd_%s_new.txt'%scan, 'r') as f:
-            subjects = [line.strip() for line in f]
+        
+        subjects = list(pd.read_csv('/home/raid3/huntenburg/workspace/lsd_data_paper/lsd_preproc.csv', dtype='str')['ID'])
         subjects.sort()
-        #subjects.remove('26858')
-        #subjects.remove('26435')
-        #subjects.remove('27062')
-         
+        
+        if scan == 'rest1a':
+            pass
+        elif scan == 'rest1b':
+            subjects.remove('')
+        elif scan == 'rest2a':
+            subjects.remove('')
+            subjects.remove('')
+        elif scan == 'rest2b':
+            subjects.remove('')
+            subjects.remove('')
+            subjects.remove('')
+            subjects.remove('')
+            subjects.remove('')
+            
+               
         #generating distributions
         print 'generating similarity'
         mincost_files = [data_dir + "%s/preprocessed/lsd_resting/%s/coregister/rest2anat.dat.mincost"%(subject, scan) for subject in subjects]
@@ -38,29 +52,31 @@ if __name__ == '__main__':
         mean_FD_distribution, max_FD_distribution = get_mean_frame_displacement_disttribution(realignment_parameters_files, 'FSL')
           
         print 'generating tsnr'
-        tsnr_files = [data_dir + "%s/preprocessed/lsd_resting/%s/realign/rest_realigned_tsnr.nii.gz"%(subject, scan) for subject in subjects]
+        tsnr_files = [glob(data_dir + "%s/preprocessed/lsd_resting/%s/realign/*tsnr.nii.gz"%(subject, scan))[0] for subject in subjects]
         mask_files = [data_dir + "%s/preprocessed/lsd_resting/%s/denoise/mask/T1_brain_mask2epi.nii.gz"%(subject, scan) for subject in subjects]
         tsnr_distributions = get_median_distribution(tsnr_files, mask_files)
          
-        df = pd.DataFrame(zip(subjects, similarity_distribution, mean_FD_distribution, max_FD_distribution, tsnr_distributions), columns = ["subject_id", "coregistration quality", "Mean FD", "Max FD", "Median tSNR"])
+        df = pd.DataFrame(zip(subjects, similarity_distribution, mean_FD_distribution, max_FD_distribution, tsnr_distributions), 
+                          columns = ["subject_id", "coregistration dissimilarity", "Mean FD", "Max FD", "Median tSNR"])
         df.to_csv(out_dir+"%s_summary.csv"%(scan))
         
-#        similarity_distribution = dict(zip(subjects, similarity_distribution))
-        
+#         similarity_distribution = dict(zip(subjects, similarity_distribution))
+#         
 #         for subject in subjects:
+#             print subject
 #             #setting paths for this subject
-#             tsnr_file = data_dir + "%s/preprocessed/lsd_resting/%s/realign/rest_realigned_tsnr.nii.gz"%(subject, scan)
+#             tsnr_file = glob(data_dir + "%s/preprocessed/lsd_resting/%s/realign/*tsnr.nii.gz"%(subject, scan))[0]
 #             
 #             timeseries_file = data_dir + "%s/preprocessed/lsd_resting/%s/rest_preprocessed.nii.gz"%(subject, scan)
 #             realignment_parameters_file = data_dir + "%s/preprocessed/lsd_resting/%s/realign/rest_realigned.par"%(subject, scan)
-#     
+#             
 #             wm_file = data_dir + "%s/preprocessed/anat/T1_brain_wmedge.nii.gz"%(subject)
 #             mean_epi_file = data_dir + "%s/preprocessed/lsd_resting/%s/coregister/rest_mean2fmap_unwarped.nii.gz"%(subject, scan)
 #             mean_epi_uncorrected_file = data_dir + "%s/preprocessed/lsd_resting/%s/coregister/rest_mean2fmap.nii.gz"%(subject, scan)
 #             mask_file = data_dir + "%s/preprocessed/lsd_resting/%s/denoise/mask/T1_brain_mask2epi.nii.gz"%(subject, scan)
 #             reg_file = data_dir + "%s/preprocessed/lsd_resting/%s/coregister/transforms2anat/rest2anat.dat"%(subject, scan)
 #             fssubjects_dir = fs_dir
-#     
+#             
 #             mincost_file = data_dir + "%s/preprocessed/lsd_resting/%s/coregister/rest2anat.dat.mincost"%(subject, scan)
 #             
 #             output_file = out_dir+"%s_%s_report.pdf"%(subject, scan)
@@ -99,5 +115,5 @@ if __name__ == '__main__':
 #             wf.add_nodes([report])
               
     #wf.run(plugin='MultiProc', plugin_args={'n_procs' : 10})
-    wf.run()
+    #wf.run()
          
